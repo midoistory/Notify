@@ -7,12 +7,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Notify @yield('title-web')</title>
+    <title>Notify | @yield('title-web')</title>
 
     <link rel="icon" href="\admin\assets\img\logo-notify.svg" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
     <link href="/admin/css/styles.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 
 <body class="sb-nav-fixed">
@@ -28,12 +29,12 @@
             <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                 <div class="sb-sidenav-menu">
                     <div class="nav">
-                        <a class="nav-link" href="/admin/index.html">
+                        <a class="nav-link" href="{{ route('admin.dashboard') }}">
                             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                             Dashboard
                         </a>
                         <div class="sb-sidenav-menu-heading">Addons</div>
-                        <a class="nav-link" href="/admin/charts.html">
+                        <a class="nav-link" href="{{ route('admin.subject.index') }}">
                             <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
                             Subject
                         </a>
@@ -79,6 +80,7 @@
     <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js"
         crossorigin="anonymous"></script>
     <script src="/admin/js/datatables-simple-demo.js"></script>
+
 </body>
 
 </html>

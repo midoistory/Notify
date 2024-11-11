@@ -9,15 +9,15 @@ class Task extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name','days_id', 'subjects_id','deadline','file','desc','status'];
-
-    public function day()
-    {
-        return $this->belongsTo(Day::class, 'days_id');
-    }
+    protected $fillable = ['name', 'subject_id', 'day_id', 'deadline', 'file', 'desc', 'status'];
 
     public function subject()
     {
-        return $this->belongsTo(subject::class, 'subjects_id');
+        return $this->belongsTo(Subject::class);
+    }
+
+    public function day()
+    {
+        return $this->belongsTo(Day::class);
     }
 }

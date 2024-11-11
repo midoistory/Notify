@@ -19,7 +19,7 @@ return new class extends Migration
             $table->date('deadline');
             $table->string('file')->nullable();
             $table->text('desc')->nullable();
-            $table->string('status')->default('pending');
+            $table->string('status');
             $table->timestamps();
         });
     }

@@ -38,7 +38,7 @@
                             <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
                             Subject
                         </a>
-                        <a class="nav-link" href="/admin/tables.html">
+                        <a class="nav-link" href="{{ route('admin.task.index') }}">
                             <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
                             Task
                         </a>

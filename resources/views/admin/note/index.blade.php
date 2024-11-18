@@ -1,8 +1,8 @@
 @extends('admin.index')
 
-@section('title-web', 'Task')
+@section('title-web', 'Notes')
 
-@section('title-page', 'Task')
+@section('title-page', 'Notes')
 
 @section('content')
     <div class="container-fluid">
@@ -15,41 +15,37 @@
 
         <div class="card mb-4">
             <div class="card-header">
-                <a href="{{ route('admin.task.create') }}" class="btn btn-primary btn-sm align-items-center">
+                <a href="{{ route('admin.note.create') }}" class="btn btn-primary btn-sm align-items-center">
                     <i class="fa-solid fa-plus me-2"></i>
-                    <span>Create Task</span>
+                    <span>Create Notes</span>
                 </a>
             </div>
             <div class="card-body">
                 <table id="datatablesSimple">
                     <thead>
                         <tr>
-                            <th>Task Name</th>
+                            <th>Notes Name</th>
                             <th>Subject</th>
-                            <th>Created At</th>
-                            <th>Deadline</th>
-                            <th>Status</th>
+                            <th>Date</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($tasks as $task)
+                        @foreach ($notes as $note)
                             <tr>
-                                <td>{{ $task->name }}</td>
-                                <td>{{ $task->subject->name }}</td>
-                                <td>{{ $task->created_at->format('d-m-Y') }}</td>
-                                <td>{{ \Carbon\Carbon::parse($task->deadline)->format('d-m-Y') }}</td>
-                                <td>{{ ucfirst($task->status) }}</td>
+                                <td>{{ $note->name }}</td>
+                                <td>{{ $note->subject->name }}</td>
+                                <td>{{ \Carbon\Carbon::parse($note->date)->format('d-m-Y') }}</td>
                                 <td>
-                                    <a href="{{ route('task.show', $task->id) }}" class="btn btn-primary btn-sm">
+                                    <a href="{{ route('note.show', $note->id) }}" class="btn btn-primary btn-sm">
                                         <i class="fas fa-eye"></i>
                                     </a>
 
-                                    <a href="{{ route('admin.task.edit', $task->id) }}" class="btn btn-warning btn-sm">
+                                    <a href="{{ route('admin.note.edit', $note->id) }}" class="btn btn-warning btn-sm">
                                         <i class="fas fa-edit"></i>
                                     </a>
 
-                                    <form action="{{ route('task.destroy', $task->id) }}" method="POST"
+                                    <form action="{{ route('note.destroy', $note->id) }}" method="POST"
                                         style="display: inline;">
                                         @csrf
                                         @method('DELETE')

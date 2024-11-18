@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\NoteController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TaskController;
 use App\Models\Subject;
@@ -41,3 +42,13 @@ Route::prefix('task')->group(function () {
     Route::delete('/{id}', [TaskController::class, 'destroy'])->name('task.destroy');
 });
 
+
+Route::prefix('note')->group(function () {
+    Route::get('/', [NoteController::class, 'index'])->name('admin.note.index');
+    Route::get('/create', [NoteController::class, 'create'])->name('admin.note.create');
+    Route::post('/', [NoteController::class, 'store'])->name('note.store');
+    Route::get('/{id}', [NoteController::class, 'show'])->name('note.show');
+    Route::get('/{id}/edit', [NoteController::class, 'edit'])->name('admin.note.edit');
+    Route::put('/{id}', [NoteController::class, 'update'])->name('note.update');
+    Route::delete('/{id}', [NoteController::class, 'destroy'])->name('note.destroy');
+});

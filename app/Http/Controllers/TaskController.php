@@ -23,35 +23,35 @@ class TaskController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'subject_id' => 'required|exists:subjects,id',
-            'day_id' => 'required|exists:days,id',
-            'deadline' => 'required|date',
-            'desc' => 'nullable|string',
-            'status' => 'required|string',
-            'file' => 'nullable|file|mimes:jpg,png,pdf,docx|max:2048',
-        ]);
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'subject_id' => 'required',
+        'day_id' => 'required',
+        'deadline' => 'required|date',
+        'desc' => 'nullable|string',
+        'file' => 'nullable|mimes:jpg,jpeg,png,gif,pdf|max:2048',
+    ]);
 
-        $taskData = [
-            'name' => $request->name,
-            'subject_id' => $request->subject_id,
-            'day_id' => $request->day_id,
-            'deadline' => $request->deadline,
-            'desc' => $request->desc,
-            'status' => $request->status,
-        ];
-
-        if ($request->hasFile('file')) {
-            $filePath = $request->file('file')->store('uploads/tasks', 'public');
-            $taskData['file'] = $filePath;
-        }
-
-        Task::create($taskData);
-
-        return redirect()->route('admin.task.index')->with('success', 'Task created successfully!');
+    $filePath = null;
+    if ($request->hasFile('file')) {
+        $file = $request->file('file');
+        $fileName = time() . '_' . $file->getClientOriginalName();
+        $filePath = $file->storeAs('public/uploads/tasks', $fileName);
     }
+
+    Task::create([
+        'name' => $request->name,
+        'subject_id' => $request->subject_id,
+        'day_id' => $request->day_id,
+        'deadline' => $request->deadline,
+        'desc' => $request->desc,
+        'file' => $fileName ?? null,
+        'status' => 'pending',
+    ]);
+
+    return redirect()->route('admin.task.index')->with('success', 'Task created successfully.');
+}
 
     public function edit($id)
     {
@@ -62,37 +62,44 @@ class TaskController extends Controller
     }
 
     public function update(Request $request, $id)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'subject_id' => 'required|exists:subjects,id',
-            'day_id' => 'required|exists:days,id',
-            'deadline' => 'required|date',
-            'desc' => 'nullable|string',
-            'status' => 'required|string',
-            'file' => 'nullable|file|mimes:jpg,png,pdf,docx|max:2048',
-        ]);
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'subject_id' => 'required',
+        'day_id' => 'required',
+        'deadline' => 'required|date',
+        'desc' => 'nullable|string',
+        'file' => 'nullable|mimes:jpg,jpeg,png,gif,pdf|max:2048',
+    ]);
 
-        $task = Task::findOrFail($id);
+    $task = Task::findOrFail($id);
 
-        $taskData = [
-            'name' => $request->name,
-            'subject_id' => $request->subject_id,
-            'day_id' => $request->day_id,
-            'deadline' => $request->deadline,
-            'desc' => $request->desc,
-            'status' => $request->status,
-        ];
-
-        if ($request->hasFile('file')) {
-            $filePath = $request->file('file')->store('uploads/tasks', 'public');
-            $taskData['file'] = $filePath;
+    // Cek apakah ada file baru
+    if ($request->hasFile('file')) {
+        // Hapus file lama jika ada
+        if ($task->file && \Storage::exists('public/uploads/tasks/' . $task->file)) {
+            \Storage::delete('public/uploads/tasks/' . $task->file);
         }
 
-        $task->update($taskData);
-
-        return redirect()->route('admin.task.index')->with('success', 'Task updated successfully!');
+        // Simpan file baru
+        $file = $request->file('file');
+        $fileName = time() . '_' . $file->getClientOriginalName();
+        $file->storeAs('public/uploads/tasks', $fileName);
+        $task->file = $fileName;
     }
+
+    // Update data task
+    $task->update([
+        'name' => $request->name,
+        'subject_id' => $request->subject_id,
+        'day_id' => $request->day_id,
+        'deadline' => $request->deadline,
+        'desc' => $request->desc,
+        'status' => $request->status ?? $task->status,
+    ]);
+
+    return redirect()->route('admin.task.index')->with('success', 'Task updated successfully.');
+}
 
     public function show($id)
     {

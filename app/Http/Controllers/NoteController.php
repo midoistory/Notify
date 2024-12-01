@@ -20,7 +20,7 @@ class NoteController extends Controller
         return view('admin.note.create', compact('subjects'));
     }
 
-    public function store(Request $request)
+public function store(Request $request)
 {
     $request->validate([
         'name' => 'required|string|max:255',
@@ -30,21 +30,30 @@ class NoteController extends Controller
         'desc' => 'nullable|string',
     ]);
 
-    $noteData = [
+    $filePath = null;
+    if ($request->hasFile('file')) {
+        $file = $request->file('file');
+        $fileName = time() . '_' . $file->getClientOriginalName();
+        $filePath = $file->storeAs('public/uploads/notes', $fileName);
+        $filePath = str_replace('public/', 'storage/', $filePath); // Mengubah path agar sesuai dengan URL akses
+    }
+
+    Note::create([
         'name' => $request->name,
         'date' => $request->date,
         'subject_id' => $request->subject_id,
         'desc' => $request->desc,
-    ];
-
-    if ($request->hasFile('file')) {
-        $filePath = $request->file('file')->store('uploads/notes', 'public');
-        $noteData['file'] = $filePath;
-    }
-
-    Note::create($noteData);
+        'file' => $filePath,
+    ]);
 
     return redirect()->route('admin.note.index')->with('success', 'Note created successfully!');
+}
+
+public function edit($id)
+{
+    $notes = Note::findOrFail($id);
+    $subjects = Subject::all();
+    return view('admin.note.edit', compact('notes', 'subjects'));
 }
 
 public function update(Request $request, $id)
@@ -57,21 +66,31 @@ public function update(Request $request, $id)
         'desc' => 'nullable|string',
     ]);
 
-    $notes = Note::findOrFail($id);
+    $note = Note::findOrFail($id);
 
-    $noteData = [
+    // Handle file upload jika ada file baru
+    if ($request->hasFile('file')) {
+        // Hapus file lama jika ada
+        if ($note->file && \Storage::exists('public/uploads/notes/' . $note->file)) {
+            \Storage::delete('public/uploads/notes/' . $note->file);
+        }
+
+        // Upload file baru
+        $file = $request->file('file');
+        $fileName = time() . '_' . $file->getClientOriginalName();
+        $filePath = $file->storeAs('public/uploads/notes', $fileName);
+        $note->file = str_replace('public/', 'storage/', $filePath);
+    }
+
+    // Update data note
+    $note->update([
         'name' => $request->name,
         'date' => $request->date,
         'subject_id' => $request->subject_id,
         'desc' => $request->desc,
-    ];
+    ]);
 
-    if ($request->hasFile('file')) {
-        $filePath = $request->file('file')->store('uploads/notes', 'public');
-        $noteData['file'] = $filePath;
-    }
-
-    $notes->update($noteData);
+    $note->save();
 
     return redirect()->route('admin.note.index')->with('success', 'Note updated successfully!');
 }
